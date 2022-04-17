@@ -18,7 +18,7 @@ namespace CountriesStructure.Tests
                 .AddCountry("CAN", "")
                 .AddCountry("USA", "CAN")
                 .AddCountry("MEX", "USA")
-                .AddCountry("GUA", "MEX");
+                .AddCountry("GTM", "MEX");
 
             _continent = continent;
         }
@@ -77,10 +77,10 @@ namespace CountriesStructure.Tests
         [Theory]
         [InlineData("MEX", "USA", new[]{"MEX", "USA" })]
         [InlineData("GUA", "CAN", new[]{"GUA", "MEX", "USA", "CAN"})]
-        public void ContinentCorrectly_CalculatesPath_BetweenTwoCountries(string destination, string origin, IEnumerable<string> path)
+        public void ContinentCorrectly_CalculatesPath_BetweenTwoCountries(string destination, string origin, IEnumerable<string> actual)
         {
             var expected =_continent.GetPathFromOriginToDestination(destination, origin);
-            Assert.Equal(path, expected);
+            Assert.Equal(expected, actual);
         }
 
         [Theory]

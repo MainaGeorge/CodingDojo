@@ -18,7 +18,4 @@ continent
     .AddCountry("PAN", "CRI");
 
 Console.WriteLine(continent);
-foreach (var country in continent)
-{
-    Console.WriteLine($"countryCode:{country.Code}");   
-}
+
