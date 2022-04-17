@@ -1,10 +1,11 @@
-﻿namespace CountriesStructure.Library;
+﻿using System.Collections;
+
+namespace CountriesStructure.Library;
 #nullable disable
 
-public class ContinentNode
+public class ContinentNode : IEnumerable<CountryNode>
 {
     private CountryNode _countries;
-
     public void AddCountry(string countryCode, string topNeighbourCode)
     {
         if (countryCode.Equals(topNeighbourCode, StringComparison.CurrentCultureIgnoreCase))
@@ -13,19 +14,12 @@ public class ContinentNode
         var country = new CountryNode(countryCode);
         _countries = AddCountry(_countries, country, topNeighbourCode);
     }
-    public void AddCountry(CountryNode countryNode, string topNeighbourCode)
-    {
-        if (countryNode.Code.Equals(topNeighbourCode, StringComparison.CurrentCultureIgnoreCase))
-            throw new ArgumentException("No country can be the top boarder to itself");
-
-        _countries = AddCountry(_countries, countryNode, topNeighbourCode);
-    }
     public CountryNode FindCountryNodeWithGivenCountryCode(string countryCode)
     {
         var countryNode = new List<CountryNode>();
         FindCountryNodeWithGivenCountryCode(_countries, countryNode, countryCode);
 
-        return countryNode[0];
+        return countryNode.Any() ? countryNode[0] : null;
     }
     public void PrintCountries()
     {
@@ -66,6 +60,13 @@ public class ContinentNode
         throw new ArgumentException("Each country must provide a valid top neigbour");
 
     }
+    private void AddCountry(CountryNode countryNode, string topNeighbourCode)
+    {
+        if (countryNode.Code.Equals(topNeighbourCode, StringComparison.CurrentCultureIgnoreCase))
+            throw new ArgumentException("No country can be the top boarder to itself");
+
+        _countries = AddCountry(_countries, countryNode, topNeighbourCode);
+    }
     private static bool FindParentCountry(CountryNode rootNode, CountryNode childNode, string topNeighbourCode)
     {
         var hasFoundParent = false;
@@ -100,6 +101,9 @@ public class ContinentNode
         ICollection<string> countries)
     {
         var destinationNode = FindCountryNodeWithGivenCountryCode(destination);
+        if (destinationNode == null)
+            throw new Exception("You can not travel to a country that does not exist");
+
         while (destinationNode is not null)
         {
             countries.Add(destinationNode.Code);
@@ -125,5 +129,29 @@ public class ContinentNode
         FindCountryNodeWithGivenCountryCode(rootNode.RightNeighbour, result, countryCode);
         FindCountryNodeWithGivenCountryCode(rootNode.LeftNeighbour, result, countryCode);
 
+    }
+
+    public IEnumerator<CountryNode> GetEnumerator()
+    {
+        if (_countries is null)
+            throw new Exception("There are no countries in this continent");
+
+        var countries = _countries;
+        var stack = new Stack<CountryNode>();
+        stack.Push(countries);
+
+        while (stack.Any())
+        {
+            var current = stack.Pop();
+            if(current.LeftNeighbour != null) stack.Push(current.LeftNeighbour);
+            if(current.RightNeighbour != null) stack.Push(current.RightNeighbour);
+
+            yield return current;
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

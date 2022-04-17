@@ -16,14 +16,18 @@ continent.AddCountry("NIC", "HON");
 continent.AddCountry("CRI", "NIC");
 continent.AddCountry("PAN", "CRI");
 
-continent.PrintCountries();
+foreach (var country in continent)
+{
+    Console.WriteLine($"countryCode:{country.Code}");   
+}
+// continent.PrintCountries();
 
 // Console.WriteLine($"the answer is {continent.CalculatePaths("MEX")}");
 
 // var mex = continent.FindCountryNodeWithGivenCountryCode("HON");
 // Console.WriteLine($"Code:{mex.Code} right: {mex.RightNeighbour?.Code} left: {mex.LeftNeighbour?.Code} ");
 //
-var paths = continent.GetPathFromOriginToDestination("MEX", "CAN");
+var paths = continent.GetPathFromOriginToDestination("PAN", "USA");
 Console.WriteLine(string.Join("->", paths));
 //continent.PrintCountries();
 //Console.WriteLine(continent.Length);
