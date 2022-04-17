@@ -12,7 +12,15 @@ namespace CountriesStructure.Tests
         
         public  ContinentTests()
         {
-            _continent = ContinentData.GetContinentTestData();
+            var continent = new ContinentNode();
+
+            continent
+                .AddCountry("CAN", "")
+                .AddCountry("USA", "CAN")
+                .AddCountry("MEX", "USA")
+                .AddCountry("GUA", "MEX");
+
+            _continent = continent;
         }
 
         [Fact]

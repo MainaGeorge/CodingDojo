@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text;
 
 namespace CountriesStructure.Library;
 #nullable disable
@@ -6,13 +7,14 @@ namespace CountriesStructure.Library;
 public class ContinentNode : IEnumerable<CountryNode>
 {
     private CountryNode _countries;
-    public void AddCountry(string countryCode, string topNeighbourCode)
+    public ContinentNode AddCountry(string countryCode, string topNeighbourCode)
     {
         if (countryCode.Equals(topNeighbourCode, StringComparison.CurrentCultureIgnoreCase))
             throw new ArgumentException("No country can be the top boarder to itself");
 
         var country = new CountryNode(countryCode);
         _countries = AddCountry(_countries, country, topNeighbourCode);
+        return this;
     }
     public CountryNode FindCountryNodeWithGivenCountryCode(string countryCode)
     {
@@ -23,7 +25,15 @@ public class ContinentNode : IEnumerable<CountryNode>
     }
     public void PrintCountries()
     {
-        if (_countries is null) return;
+
+        
+    }
+
+    public override string ToString()
+    {
+        if (_countries is null) return base.ToString();
+
+        var result = new StringBuilder();
 
         var countries = _countries;
         var stack = new Stack<CountryNode>();
@@ -31,11 +41,14 @@ public class ContinentNode : IEnumerable<CountryNode>
         while (stack.Any())
         {
             var current = stack.Pop();
-            PrintCountry(current);
+            result.AppendLine(PrintCountry(current));
             if (current.LeftNeighbour != null) stack.Push(current.LeftNeighbour);
             if (current.RightNeighbour != null) stack.Push(current.RightNeighbour);
         }
+
+        return result.ToString();
     }
+
     public IEnumerable<string> GetPathFromOriginToDestination(string destination, string origin = "USA")
     {
         var countriesToPassThrough = new List<string>();
@@ -43,6 +56,24 @@ public class ContinentNode : IEnumerable<CountryNode>
         CalculatePaths(destination, origin, countriesToPassThrough);
 
         return countriesToPassThrough;
+    }
+    public IEnumerator<CountryNode> GetEnumerator()
+    {
+        if (_countries is null)
+            throw new Exception("There are no countries in this continent");
+
+        var countries = _countries;
+        var stack = new Stack<CountryNode>();
+        stack.Push(countries);
+
+        while (stack.Any())
+        {
+            var current = stack.Pop();
+            if (current.LeftNeighbour != null) stack.Push(current.LeftNeighbour);
+            if (current.RightNeighbour != null) stack.Push(current.RightNeighbour);
+
+            yield return current;
+        }
     }
     private static CountryNode AddCountry(CountryNode rootNode, CountryNode childNode, string topNeighbourCode)
     {
@@ -94,9 +125,10 @@ public class ContinentNode : IEnumerable<CountryNode>
 
         return hasFoundParent;
     }
-    private static void PrintCountry(CountryNode country) =>
-        Console.WriteLine(
-            $"country: {country.Code} topNeighbour {country.TopNeighbour?.Code ?? "None"} right:{country.RightNeighbour?.Code ?? "None"} Left: {country.LeftNeighbour?.Code ?? "None"}");
+    private static string PrintCountry(CountryNode country)
+    {
+        return $"country: {country.Code} topNeighbour: {country.TopNeighbour?.Code ?? "None"} rightNeighbour:{country.RightNeighbour?.Code ?? "None"} LeftNeighbour: {country.LeftNeighbour?.Code ?? "None"}";
+    }
     private void CalculatePaths(string destination, string origin,
         ICollection<string> countries)
     {
@@ -130,26 +162,6 @@ public class ContinentNode : IEnumerable<CountryNode>
         FindCountryNodeWithGivenCountryCode(rootNode.LeftNeighbour, result, countryCode);
 
     }
-
-    public IEnumerator<CountryNode> GetEnumerator()
-    {
-        if (_countries is null)
-            throw new Exception("There are no countries in this continent");
-
-        var countries = _countries;
-        var stack = new Stack<CountryNode>();
-        stack.Push(countries);
-
-        while (stack.Any())
-        {
-            var current = stack.Pop();
-            if(current.LeftNeighbour != null) stack.Push(current.LeftNeighbour);
-            if(current.RightNeighbour != null) stack.Push(current.RightNeighbour);
-
-            yield return current;
-        }
-    }
-
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
