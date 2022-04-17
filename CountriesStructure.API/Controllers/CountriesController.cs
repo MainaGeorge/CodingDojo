@@ -1,5 +1,5 @@
-﻿using CountriesStructure.API.Data;
-using CountriesStructure.API.Models;
+﻿using CountriesStructure.API.Models;
+using CountriesStructure.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CountriesStructure.API.Controllers
@@ -8,17 +8,17 @@ namespace CountriesStructure.API.Controllers
     [ApiController]
     public class CountriesController : ControllerBase
     {
-        private readonly CountryContext _context;
+        private readonly IContinentRepository _repo;
 
-        public CountriesController(CountryContext context)
+        public CountriesController(IContinentRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         [HttpGet]
-        public IEnumerable<Country> GetCountries()
+        public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
         {
-            return _context.Countries.ToList();
+            return Ok(await  _repo.GetCountries());
         }
     }
 }
