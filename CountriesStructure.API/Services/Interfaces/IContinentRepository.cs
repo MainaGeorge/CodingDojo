@@ -6,5 +6,7 @@ namespace CountriesStructure.API.Services.Interfaces
     {
         Task<IEnumerable<Country>> GetCountries();
         Task<bool> ContainsCountry(string countryCode);
+        Task<IEnumerable<string>> GetPathFromOriginToDestination(string destinationCountryCode, string originCountryCode);
+
     }
 }

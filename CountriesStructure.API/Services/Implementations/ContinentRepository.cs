@@ -23,5 +23,23 @@ namespace CountriesStructure.API.Services.Implementations
             return await _context.Countries.AnyAsync(c =>
                 c.Code.Equals(countryCode, StringComparison.CurrentCultureIgnoreCase));
         }
+
+        public async Task<IEnumerable<string>> GetPathFromOriginToDestination(string destinationCountryCode, string originCountryCode)
+        {
+            
+            var destCountry = await _context.Countries.FirstOrDefaultAsync(c =>
+                c.Code.Equals(destinationCountryCode, StringComparison.CurrentCultureIgnoreCase));
+
+            var originCountry = await _context.Countries.FirstOrDefaultAsync(c =>
+                c.Code.Equals(originCountryCode, StringComparison.CurrentCultureIgnoreCase));
+
+            if (destCountry is null || originCountry is null)
+                throw new ArgumentException("You can not travel to a country that does not exist");
+
+            if (originCountry.Id > destCountry.Id)
+                (originCountry, destCountry) = (destCountry, originCountry);
+
+            return await _context.Countries.Where(c => c.Id >=originCountry.Id && c.Id <= destCountry.Id).Select(x => x.Code).ToListAsync();
+        }
     }
 }

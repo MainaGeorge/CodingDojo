@@ -13,10 +13,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<CountryContext>(op => op.UseInMemoryDatabase("movies"));
 builder.Services.AddSingleton<IContinentStructure, ContinentStructure>();
+builder.Services.AddScoped<IContinentRepository, ContinentRepository>();
 
 
 
 var app = builder.Build();
+using var scope = app.Services.CreateScope();
+
+var context = scope.ServiceProvider.GetRequiredService<CountryContext>();
+CountriesData.SeedCountriesInMemoryData(context);
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

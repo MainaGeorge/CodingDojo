@@ -8,17 +8,24 @@ namespace CountriesStructure.API.Controllers
     [ApiController]
     public class CountriesController : ControllerBase
     {
-        private readonly IContinentStructure _continent;
+        private readonly IContinentStructure _continentStructure;
+        private readonly IContinentRepository _continentRepo;
 
-        public CountriesController(IContinentStructure continent)
+        public CountriesController(IContinentStructure continentStructure, IContinentRepository continentRepo)
         {
-            _continent = continent;
+            _continentStructure = continentStructure;
+            _continentRepo = continentRepo;
         }
 
         [HttpGet("{destinationCountryCode}")]
         public async Task<ActionResult<IEnumerable<Country>>> GetCountries(string destinationCountryCode, string originCountryCode="USA")
         {
-            return Ok(await  _continent.GetPathFromOriginToDestination(destinationCountryCode, originCountryCode));
+            var structureResult =
+                await _continentStructure.GetPathFromOriginToDestination(destinationCountryCode, originCountryCode);
+            var databaseResult =
+                await _continentRepo.GetPathFromOriginToDestination(destinationCountryCode, originCountryCode);
+
+            return Ok(new {structureResult, databaseResult});
         }
     }
 }
