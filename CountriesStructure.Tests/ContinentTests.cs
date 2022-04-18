@@ -76,7 +76,7 @@ namespace CountriesStructure.Tests
 
         [Theory]
         [InlineData("MEX", "USA", new[]{"MEX", "USA" })]
-        [InlineData("GUA", "CAN", new[]{"GUA", "MEX", "USA", "CAN"})]
+        [InlineData("GTM", "CAN", new[]{"GTM", "MEX", "USA", "CAN"})]
         public void ContinentCorrectly_CalculatesPath_BetweenTwoCountries(string destination, string origin, IEnumerable<string> actual)
         {
             var expected =_continent.GetPathFromOriginToDestination(destination, origin);
@@ -85,12 +85,19 @@ namespace CountriesStructure.Tests
 
         [Theory]
         [InlineData("MEX")]
-        [InlineData("GUA")]
+        [InlineData("GTM")]
         public void CountryOfOrigin_DefaultsToUsa_IfNotSpecified(string destination)
         {
             var path = _continent.GetPathFromOriginToDestination(destination);
 
             Assert.Contains("USA", path);
+        }
+
+        [Theory]
+        [InlineData("PAN", "SLV")]
+        public void Continent_ThrowsException_ifNoPathBetweenTwoCountriesExist(string origin, string destination)
+        {
+            Assert.Throws<Exception>(() => _continent.GetPathFromOriginToDestination(destination, origin));
         }
     }
 }

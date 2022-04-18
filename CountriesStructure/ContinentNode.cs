@@ -23,12 +23,7 @@ public class ContinentNode : IEnumerable<CountryNode>
 
         return countryNode.Any() ? countryNode[0] : null;
     }
-    public void PrintCountries()
-    {
-
-        
-    }
-
+    
     public override string ToString()
     {
         if (_countries is null) return base.ToString();
@@ -133,8 +128,6 @@ public class ContinentNode : IEnumerable<CountryNode>
         ICollection<string> countries)
     {
         var destinationNode = FindCountryNodeWithGivenCountryCode(destination);
-        if (destinationNode == null)
-            throw new Exception("You can not travel to a country that does not exist");
 
         while (destinationNode is not null)
         {
@@ -147,6 +140,9 @@ public class ContinentNode : IEnumerable<CountryNode>
 
             destinationNode = destinationNode.TopNeighbour;
         }
+
+        if (destinationNode == null)
+            throw new Exception($"There is no path between {origin!.ToUpper()} and {destination.ToUpper()}");
     }
     private static void FindCountryNodeWithGivenCountryCode(CountryNode rootNode, ICollection<CountryNode> result, string countryCode)
     {

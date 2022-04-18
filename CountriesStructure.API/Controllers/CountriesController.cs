@@ -22,15 +22,32 @@ namespace CountriesStructure.API.Controllers
         public async Task<ActionResult<IEnumerable<Country>>> GetCountries(string destinationCountryCode)
         {
             var structureResult =
-                await _continentStructure.GetPathFromOriginToDestination(destinationCountryCode, "Usa");
+                await _continentStructure.GetPathFromOriginToDestination(destinationCountryCode, "USA");
             var databaseResult =
-                await _continentRepo.GetPathFromOriginToDestination(destinationCountryCode, "usa");
+                await _continentRepo.GetPathFromOriginToDestination(destinationCountryCode, "USA");
             
             return Ok(new
             {
                 structureResult,
                 databaseResult,
             });
+        }
+
+        [HttpGet("{source}/{destination}")]
+        public async Task<ActionResult<IEnumerable<Country>>> GetCountriesFromSourceToDestination(string source,
+            string destination)
+        {
+            var structureResult =
+            await _continentStructure.GetPathFromOriginToDestination(source, destination);
+            var databaseResult =
+                await _continentRepo.GetPathFromOriginToDestination(source, destination);
+
+            return Ok(new
+            {
+                structureResult,
+                databaseResult,
+            });
+
         }
     }
 }

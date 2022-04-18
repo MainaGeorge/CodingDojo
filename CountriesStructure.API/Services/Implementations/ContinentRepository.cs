@@ -13,16 +13,6 @@ namespace CountriesStructure.API.Services.Implementations
         {
             _context = context;
         }
-        public async Task<IEnumerable<Country>> GetCountries()
-        {
-            return await _context.Countries.ToArrayAsync();
-        }
-
-        public async Task<bool> ContainsCountry(string countryCode)
-        {
-            return await _context.Countries.AnyAsync(c =>
-                c.Code.Equals(countryCode, StringComparison.CurrentCultureIgnoreCase));
-        }
 
         public async Task<IEnumerable<string>> GetPathFromOriginToDestination(string destinationCountryCode, string originCountryCode)
         {
@@ -37,14 +27,14 @@ namespace CountriesStructure.API.Services.Implementations
 
             while (topNeighbour != null && !topNeighbour!.Code.Equals(destCountry.Code))
             {
-                var nextTopNeighbour =
+                var nextCountryToPassThrough =
                     await _context.Countries.Include(c => c.TopNeighbour).FirstOrDefaultAsync(c => c.Code.Equals(topNeighbour.Code));
 
-                if (nextTopNeighbour?.TopNeighbour is null)
+                if (nextCountryToPassThrough?.TopNeighbour is null)
                     throw new Exception($"No such path exists from {originCountry.Code} to {destCountry.Code}");
 
                 countriesToPassThrough.Add(topNeighbour.Code);
-                topNeighbour = nextTopNeighbour.TopNeighbour;
+                topNeighbour = nextCountryToPassThrough.TopNeighbour;
             }
 
             if (topNeighbour is null)

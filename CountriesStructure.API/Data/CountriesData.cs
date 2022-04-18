@@ -7,16 +7,16 @@ namespace CountriesStructure.API.Data
         public static IEnumerable<Country> GetCountriesData() =>
             new List<Country>()
             {
-                new(){Name = "Canada", Code = "CAN", TopNeighbourCode = ""},
-                new(){Name="United States of America", Code = "USA", TopNeighbourCode = "CAN"},
-                new(){Name="Mexico", Code = "MEX", TopNeighbourCode = "USA"},
-                new(){Name="Belize", Code = "BLZ", TopNeighbourCode = "MEX"},
-                new(){Name = "Guatemala", Code = "GTM", TopNeighbourCode = "MEX"},
-                new(){Name = "El Salvador", Code = "SLV", TopNeighbourCode = "GTM"},
-                new(){Name = "Honduras", Code = "HND", TopNeighbourCode = "GTM"},
-                new(){Name = "Nicaragua", Code = "NIC", TopNeighbourCode = "HND"},
-                new(){Name = "CostaRica",Code = "CRI", TopNeighbourCode = "NIC"},
-                new(){Name = "Panama", Code = "PAN", TopNeighbourCode = "CRI"}
+                new(){Name = "Canada", Code = "CAN", TopNeighbourCode = "",Id = 1},
+                new(){Name="United States of America", Code = "USA", TopNeighbourCode = "CAN",Id=2},
+                new(){Name="Mexico", Code = "MEX", TopNeighbourCode = "USA", Id=3},
+                new(){Name="Belize", Code = "BLZ", TopNeighbourCode = "MEX", Id=4},
+                new(){Name = "Guatemala", Code = "GTM", TopNeighbourCode = "MEX", Id=5},
+                new(){Name = "El Salvador", Code = "SLV", TopNeighbourCode = "GTM", Id=6},
+                new(){Name = "Honduras", Code = "HND", TopNeighbourCode = "GTM", Id=7},
+                new(){Name = "Nicaragua", Code = "NIC", TopNeighbourCode = "HND", Id=8},
+                new(){Name = "CostaRica",Code = "CRI", TopNeighbourCode = "NIC", Id=9},
+                new(){Name = "Panama", Code = "PAN", TopNeighbourCode = "CRI", Id=10}
             };
 
         public static IEnumerable<TopNeighbour> GetTopNeighboursData() =>

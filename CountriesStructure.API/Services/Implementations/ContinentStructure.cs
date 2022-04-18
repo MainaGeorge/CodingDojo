@@ -21,6 +21,8 @@ namespace CountriesStructure.API.Services.Implementations
 
         
         public async Task<IEnumerable<string>> GetPathFromOriginToDestination(string destinationCountryCode, string originCountryCode)
+        
+        
         {
             var destCountry = _countries.FirstOrDefault(c =>
                 c.Code.Equals(destinationCountryCode, StringComparison.CurrentCultureIgnoreCase));
@@ -31,7 +33,7 @@ namespace CountriesStructure.API.Services.Implementations
             if(destCountry is null || originCountry is null)
                 throw new ArgumentException("You can not travel to a country that does not exist");
 
-            if (originCountry.Id > destCountry.Id)
+            if (destCountry.Id < originCountry.Id)
                  (destinationCountryCode, originCountryCode) = (originCountryCode, destinationCountryCode);
 
             return await Task.FromResult(_continent.GetPathFromOriginToDestination(destinationCountryCode, originCountryCode));
