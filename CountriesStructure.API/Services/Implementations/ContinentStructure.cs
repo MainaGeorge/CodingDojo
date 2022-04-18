@@ -31,9 +31,8 @@ namespace CountriesStructure.API.Services.Implementations
             if(destCountry is null || originCountry is null)
                 throw new ArgumentException("You can not travel to a country that does not exist");
 
-            //traversal is downwards only, so if the destination is higher than origin, we have to switch them
             if (originCountry.Id > destCountry.Id)
-                (destinationCountryCode, originCountryCode) = (originCountryCode, destinationCountryCode);
+                 (destinationCountryCode, originCountryCode) = (originCountryCode, destinationCountryCode);
 
             return await Task.FromResult(_continent.GetPathFromOriginToDestination(destinationCountryCode, originCountryCode));
         }

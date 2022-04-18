@@ -2,12 +2,17 @@ using CountriesStructure.API.Data;
 using CountriesStructure.API.Services.Implementations;
 using CountriesStructure.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(opt =>
+{
+    opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    opt.SerializerSettings.Formatting = Formatting.Indented;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
