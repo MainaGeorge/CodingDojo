@@ -7,6 +7,7 @@ The following assumptions were made when creating the app, using the following i
 ![countries](https://user-images.githubusercontent.com/54276299/163845176-a054b101-5f29-4403-b223-f673364d8e76.png)
 
 the countries with their three letter codes are:
+
 ![countrycodes](https://user-images.githubusercontent.com/54276299/163845827-51790b25-9b60-44db-bb81-c862fa21566c.png)
 
 The order in which the countries are saved to the database is the same as they appear on the map from top to bottom
