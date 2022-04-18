@@ -45,6 +45,11 @@ namespace CountriesStructure.API.Services.Implementations
 
         }
 
+        public Task<IEnumerable<string>> GetPathToDestination(string destinationCountryCode)
+        {
+            return GetPathFromOriginToDestination(destinationCountryCode, "USA");
+        }
+
         private async Task<(Country, Country)> GetDestinationAndOriginCountries(string destinationCountryCode, string originCountryCode)
         {
             var destCountry = await _context.Countries.Include(c => c.TopNeighbour).FirstOrDefaultAsync(c =>

@@ -21,8 +21,6 @@ namespace CountriesStructure.API.Services.Implementations
 
         
         public async Task<IEnumerable<string>> GetPathFromOriginToDestination(string destinationCountryCode, string originCountryCode)
-        
-        
         {
             var destCountry = _countries.FirstOrDefault(c =>
                 c.Code.Equals(destinationCountryCode, StringComparison.CurrentCultureIgnoreCase));
@@ -37,6 +35,11 @@ namespace CountriesStructure.API.Services.Implementations
                  (destinationCountryCode, originCountryCode) = (originCountryCode, destinationCountryCode);
 
             return await Task.FromResult(_continent.GetPathFromOriginToDestination(destinationCountryCode, originCountryCode));
+        }
+
+        public Task<IEnumerable<string>> GetPathToDestination(string destinationCountryCode)
+        {
+            return GetPathFromOriginToDestination(destinationCountryCode, "USA");
         }
     }
 }

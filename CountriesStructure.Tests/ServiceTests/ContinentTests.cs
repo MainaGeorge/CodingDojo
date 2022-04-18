@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using CountriesStructure.Library;
+using CountriesStructure.Tests.MockData;
 using Xunit;
 
-namespace CountriesStructure.Tests
+namespace CountriesStructure.Tests.ServiceTests
 {
     public class ContinentTests
     {
@@ -14,19 +15,16 @@ namespace CountriesStructure.Tests
         {
             var continent = new ContinentNode();
 
-            continent
-                .AddCountry("CAN", "")
-                .AddCountry("USA", "CAN")
-                .AddCountry("MEX", "USA")
-                .AddCountry("GTM", "MEX");
-
+            foreach (var country in MockDataCountries.GetCountries())
+                continent.AddCountry(country.Code, country.TopNeighbourCode);
+            
             _continent = continent;
         }
 
         [Fact]
         public void ContinentAddsCountry_Correctly_GivenAValidTopNeighbour()
         {
-            _continent.AddCountry("BLZ", "MEX");
+            _continent.AddCountry("HND", "GTM");
 
             var blz = _continent.FindCountryNodeWithGivenCountryCode("BLZ");
 

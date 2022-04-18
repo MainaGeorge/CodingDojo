@@ -19,22 +19,19 @@ namespace CountriesStructure.API.Controllers
 
         
         [HttpGet("{destinationCountryCode}")]
-        public async Task<ActionResult<IEnumerable<Country>>> GetCountries(string destinationCountryCode)
+        public async Task<ActionResult<ResponseData>> GetCountriesToDestination(string destinationCountryCode)
         {
             var structureResult =
-                await _continentStructure.GetPathFromOriginToDestination(destinationCountryCode, "USA");
+                await _continentStructure.GetPathToDestination(destinationCountryCode);
             var databaseResult =
-                await _continentRepo.GetPathFromOriginToDestination(destinationCountryCode, "USA");
-            
-            return Ok(new
-            {
-                structureResult,
-                databaseResult,
-            });
+                await _continentRepo.GetPathToDestination(destinationCountryCode);
+
+            return Ok(new ResponseData(databaseResult, structureResult));
+
         }
 
         [HttpGet("{source}/{destination}")]
-        public async Task<ActionResult<IEnumerable<Country>>> GetCountriesFromSourceToDestination(string source,
+        public async Task<ActionResult<ResponseData>> GetCountriesFromSourceToDestination(string source,
             string destination)
         {
             var structureResult =
@@ -42,11 +39,7 @@ namespace CountriesStructure.API.Controllers
             var databaseResult =
                 await _continentRepo.GetPathFromOriginToDestination(source, destination);
 
-            return Ok(new
-            {
-                structureResult,
-                databaseResult,
-            });
+            return Ok(new ResponseData(databaseResult, structureResult));
 
         }
     }
