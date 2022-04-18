@@ -1,8 +1,6 @@
-﻿using CountriesStructure.API.Data;
-using CountriesStructure.API.Models;
+﻿using CountriesStructure.API.Models;
 using CountriesStructure.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CountriesStructure.API.Controllers
 {
@@ -12,13 +10,11 @@ namespace CountriesStructure.API.Controllers
     {
         private readonly IContinentStructure _continentStructure;
         private readonly IContinentRepository _continentRepo;
-        private readonly CountryContext _context;
 
-        public CountriesController(IContinentStructure continentStructure, IContinentRepository continentRepo, CountryContext context)
+        public CountriesController(IContinentStructure continentStructure, IContinentRepository continentRepo)
         {
             _continentStructure = continentStructure;
             _continentRepo = continentRepo;
-            _context = context;
         }
 
         
@@ -30,13 +26,10 @@ namespace CountriesStructure.API.Controllers
             var databaseResult =
                 await _continentRepo.GetPathFromOriginToDestination(destinationCountryCode, "usa");
             
-            // var countriesToPassThrough = await _continentRepo.GetPathFromOriginToDestination("BLZ", "USA");
-            var countries = await _context.Countries.Include(c => c.TopNeighbour).ToListAsync();
             return Ok(new
             {
                 structureResult,
                 databaseResult,
-                countries
             });
         }
     }

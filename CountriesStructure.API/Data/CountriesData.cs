@@ -30,13 +30,13 @@ namespace CountriesStructure.API.Data
                 new(){Code = "NIC"},
                 new(){Code = "CRI"},
             };
-        public static void SeedCountriesInMemoryData(CountryContext context)
+        public static async Task SeedCountriesInMemoryData(CountryContext context)
         {
             if (context.Countries.Any()) return;
 
-            context.TopNeighbours.AddRange(GetTopNeighboursData());
-            context.Countries.AddRange(GetCountriesData());
-            context.SaveChanges();
+            await context.TopNeighbours.AddRangeAsync(GetTopNeighboursData());
+            await context.Countries.AddRangeAsync(GetCountriesData());
+            await context.SaveChangesAsync();
         }
     }
 }

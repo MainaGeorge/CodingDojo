@@ -1,3 +1,4 @@
+using CountriesStructure.API.CustomMiddleware;
 using CountriesStructure.API.Data;
 using CountriesStructure.API.Services.Implementations;
 using CountriesStructure.API.Services.Interfaces;
@@ -26,9 +27,10 @@ var app = builder.Build();
 using var scope = app.Services.CreateScope();
 
 var context = scope.ServiceProvider.GetRequiredService<CountryContext>();
-CountriesData.SeedCountriesInMemoryData(context);
+await CountriesData.SeedCountriesInMemoryData(context);
 
 
+app.UseErrorHandlingMiddleWare();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
