@@ -23,16 +23,4 @@ namespace CountriesStructure.API.Models
 
 
     }
-    
-    public class TopNeighbour 
-    {
-        [Key]
-        [StringLength(maximumLength:3, MinimumLength = 3)]
-        public string Code { get; set; }
-
-        public ICollection<Country> Countries { get; set; } 
-    }
-
-
-
 }

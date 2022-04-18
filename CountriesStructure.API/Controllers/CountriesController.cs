@@ -17,7 +17,7 @@ namespace CountriesStructure.API.Controllers
             _continentRepo = continentRepo;
         }
 
-        
+        [ProducesResponseType(typeof(ResponseData), StatusCodes.Status200OK)]
         [HttpGet("{destinationCountryCode}")]
         public async Task<ActionResult<ResponseData>> GetCountriesToDestination(string destinationCountryCode)
         {
@@ -30,6 +30,7 @@ namespace CountriesStructure.API.Controllers
 
         }
 
+        [ProducesResponseType(typeof(ResponseData), StatusCodes.Status200OK)]
         [HttpGet("{source}/{destination}")]
         public async Task<ActionResult<ResponseData>> GetCountriesFromSourceToDestination(string source,
             string destination)
