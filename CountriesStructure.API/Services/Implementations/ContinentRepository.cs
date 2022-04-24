@@ -2,7 +2,6 @@
 using CountriesStructure.API.Models;
 using CountriesStructure.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-
 namespace CountriesStructure.API.Services.Implementations
 {
     public class ContinentRepository : IContinentRepository
@@ -17,7 +16,10 @@ namespace CountriesStructure.API.Services.Implementations
         public async Task<IEnumerable<string>> GetPathFromOriginToDestination(string destinationCountryCode, string originCountryCode)
         {
             if(destinationCountryCode.Equals(originCountryCode, StringComparison.CurrentCultureIgnoreCase))
-                throw new Exception("You are already here dummy!!");
+                throw new ArgumentException("You are already here dummy!!");
+
+            if (string.IsNullOrWhiteSpace(destinationCountryCode) || string.IsNullOrWhiteSpace(originCountryCode))
+                throw new ArgumentException("You have to enter both origin and destination countries");
 
             var (originCountry, destCountry) = await GetDestinationAndOriginCountries(destinationCountryCode, originCountryCode);
 
@@ -25,17 +27,7 @@ namespace CountriesStructure.API.Services.Implementations
 
             var topNeighbour = originCountry.TopNeighbour;
 
-            while (topNeighbour != null && !topNeighbour!.Code.Equals(destCountry.Code))
-            {
-                var nextCountryToPassThrough =
-                    await _context.Countries.Include(c => c.TopNeighbour).FirstOrDefaultAsync(c => c.Code.Equals(topNeighbour.Code));
-
-                if (nextCountryToPassThrough?.TopNeighbour is null)
-                    throw new Exception($"No such path exists from {originCountry.Code} to {destCountry.Code}");
-
-                countriesToPassThrough.Add(topNeighbour.Code);
-                topNeighbour = nextCountryToPassThrough.TopNeighbour;
-            }
+            topNeighbour = await TraverseCountriesBetweenOriginAndDestination(topNeighbour, destCountry.Code, originCountry.Code, countriesToPassThrough);
 
             if (topNeighbour is null)
                 throw new Exception($"No such path exists from {originCountry.Code} to {destCountry.Code}");
@@ -45,6 +37,25 @@ namespace CountriesStructure.API.Services.Implementations
 
         }
 
+        private async Task<TopNeighbour?> TraverseCountriesBetweenOriginAndDestination(TopNeighbour? topNeighbour, string destinationCountryCode, 
+            string originCountryCode, ICollection<string> countriesToPassThrough)
+        {
+            while (topNeighbour != null && !topNeighbour!.Code.Equals(destinationCountryCode))
+            {
+                var nextCountryToPassThrough =
+                    await _context.Countries.Include(c => c.TopNeighbour)
+                        .FirstOrDefaultAsync(c => c.Code.Equals(topNeighbour.Code));
+
+                if (nextCountryToPassThrough?.TopNeighbour is null)
+                    throw new Exception($"No such path exists from {originCountryCode} to {destinationCountryCode}");
+
+                countriesToPassThrough.Add(topNeighbour.Code);
+                topNeighbour = nextCountryToPassThrough.TopNeighbour;
+            }
+
+            return topNeighbour;
+        }
+
         public Task<IEnumerable<string>> GetPathToDestination(string destinationCountryCode)
         {
             return GetPathFromOriginToDestination(destinationCountryCode, "USA");
@@ -52,12 +63,9 @@ namespace CountriesStructure.API.Services.Implementations
 
         private async Task<(Country, Country)> GetDestinationAndOriginCountries(string destinationCountryCode, string originCountryCode)
         {
-            var destCountry = await _context.Countries.Include(c => c.TopNeighbour).FirstOrDefaultAsync(c =>
-                c.Code.Equals(destinationCountryCode, StringComparison.CurrentCultureIgnoreCase));
-
-            var originCountry = await _context.Countries.Include(c => c.TopNeighbour).FirstOrDefaultAsync(c =>
-                c.Code.Equals(originCountryCode, StringComparison.CurrentCultureIgnoreCase));
-
+            var destCountry = await GetCountryWithTopNeighbour(destinationCountryCode);
+            var originCountry = await GetCountryWithTopNeighbour(originCountryCode);
+            
             if (destCountry is null || originCountry is null)
                 throw new ArgumentException("You can not travel to or come from a country that does not exist");
 
@@ -66,5 +74,10 @@ namespace CountriesStructure.API.Services.Implementations
 
             return (originCountry, destCountry);
         }
+        
+        private async Task<Country?> GetCountryWithTopNeighbour(string countryCode) => await _context
+            .Countries
+            .Include(c => c.TopNeighbour)
+            .FirstOrDefaultAsync(c => c.Code.Equals(countryCode, StringComparison.CurrentCultureIgnoreCase)); 
     }
 }

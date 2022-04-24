@@ -2,8 +2,8 @@
 {
     public class ResponseData
     {
-        public IEnumerable<string> PathFromDatabase { get; set; }
-        public IEnumerable<string> PathFromDataStructure { get; set; }
+        public IEnumerable<string> PathFromDatabase { get; private set; }
+        public IEnumerable<string> PathFromDataStructure { get; private set; }
 
         public ResponseData(IEnumerable<string> pathFromDatabase, IEnumerable<string> pathFromDataStructure)
         {

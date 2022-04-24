@@ -7,7 +7,7 @@ namespace CountriesStructure.API.Models
     public class Country
     {
         [Key]
-        public int Id { get; set; } 
+        public int Id { get; init; } 
 
         [Required]
         public string Name { get; set; }
