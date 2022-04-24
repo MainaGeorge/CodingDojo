@@ -14,7 +14,6 @@ namespace CountriesStructure.Tests.ControllerTests
         private readonly CountriesController _countriesController;
         private const string DESTINATION_COUNTRY_CODE = "MEX";
         private const string ORIGIN_COUNTRY_CODE = "USA";
-        private const string INVALID_COUNTRY_MEMBER = "PAN";
 
         public CountriesControllerTests()
         {
@@ -24,13 +23,11 @@ namespace CountriesStructure.Tests.ControllerTests
             mockRepo.Setup(_ => _.GetPathFromOriginToDestination(DESTINATION_COUNTRY_CODE, ORIGIN_COUNTRY_CODE))
                 .ReturnsAsync(new[] { "USA", "MEX" });
             mockRepo.Setup(_ => _.GetPathToDestination(DESTINATION_COUNTRY_CODE)).ReturnsAsync(new[] { "USA", "MEX" });
-            mockRepo.Setup(_ => _.GetPathToDestination(INVALID_COUNTRY_MEMBER)).Throws<ArgumentException>();
 
             mockStructure.Setup(_ => _.GetPathFromOriginToDestination(DESTINATION_COUNTRY_CODE, ORIGIN_COUNTRY_CODE))
                 .ReturnsAsync(new[] { "USA", "MEX" });
             mockStructure.Setup(_ => _.GetPathToDestination(DESTINATION_COUNTRY_CODE))
                 .ReturnsAsync(new[] { "USA", "MEX" });
-            mockStructure.Setup(_ => _.GetPathToDestination(INVALID_COUNTRY_MEMBER)).Throws<ArgumentException>();
 
             _countriesController = new CountriesController(mockStructure.Object, mockRepo.Object);
         }
@@ -76,8 +73,11 @@ namespace CountriesStructure.Tests.ControllerTests
             var actualResultTwo = resultTwoType?.Value as ResponseData;
 
             Assert.Equal(new[]{"USA", "MEX"}, actualResultOne?.PathFromDataStructure);
-            Assert.Equal(new[]{"USA", "MEX"}, actualResultTwo?.PathFromDatabase);
-        }
+            Assert.Equal(new[]{"USA", "MEX"}, actualResultOne?.PathFromDatabase);
 
+            Assert.Equal(new[]{"USA", "MEX"}, actualResultTwo?.PathFromDatabase);
+            Assert.Equal(new[]{"USA", "MEX"}, actualResultTwo?.PathFromDataStructure);
+
+        }
     }
 }

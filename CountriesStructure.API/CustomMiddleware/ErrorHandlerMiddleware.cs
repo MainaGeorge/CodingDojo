@@ -3,10 +3,12 @@
     public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IWebHostEnvironment _host;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        public ErrorHandlerMiddleware(RequestDelegate next, IWebHostEnvironment host)
         {
             _next = next;
+            _host = host;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -22,14 +24,16 @@
         }
 
 
-        private static async Task HandleExceptionAsync(HttpContext context, Exception e)
+        private async Task HandleExceptionAsync(HttpContext context, Exception e)
         {
             context.Response.ContentType = "application/json";
-            var statusCode = context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            
+            var statusCode = context.Response.StatusCode = context.Response.StatusCode;
+            var message = e.Message ?? "something went wrong";
+            var stackTrace = _host.EnvironmentName.Equals("Development") ? e?.StackTrace : null;
 
-            var message = e?.Message ?? "something went wrong";
-
-            await context.Response.WriteAsync(new ErrorDescriptor(statusCode, message).ToString());
+            await context.Response.WriteAsync(new ErrorDescriptor(statusCode, message, stackTrace).ToString());
         }
     }
 }

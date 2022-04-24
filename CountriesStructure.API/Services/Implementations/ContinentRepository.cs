@@ -15,11 +15,11 @@ namespace CountriesStructure.API.Services.Implementations
 
         public async Task<IEnumerable<string>> GetPathFromOriginToDestination(string destinationCountryCode, string originCountryCode)
         {
-            if(destinationCountryCode.Equals(originCountryCode, StringComparison.CurrentCultureIgnoreCase))
-                throw new ArgumentException("You are already here dummy!!");
-
             if (string.IsNullOrWhiteSpace(destinationCountryCode) || string.IsNullOrWhiteSpace(originCountryCode))
                 throw new ArgumentException("You have to enter both origin and destination countries");
+            
+            if(destinationCountryCode.Equals(originCountryCode, StringComparison.CurrentCultureIgnoreCase))
+                throw new ArgumentException("You are already here dummy!!");
 
             var (originCountry, destCountry) = await GetDestinationAndOriginCountries(destinationCountryCode, originCountryCode);
 
@@ -34,9 +34,11 @@ namespace CountriesStructure.API.Services.Implementations
 
             countriesToPassThrough.Add(destCountry.Code);
             return countriesToPassThrough;
-
         }
-
+        
+        public Task<IEnumerable<string>> GetPathToDestination(string destinationCountryCode) =>
+            GetPathFromOriginToDestination(destinationCountryCode, "USA");
+        
         private async Task<TopNeighbour?> TraverseCountriesBetweenOriginAndDestination(TopNeighbour? topNeighbour, string destinationCountryCode, 
             string originCountryCode, ICollection<string> countriesToPassThrough)
         {
@@ -55,12 +57,7 @@ namespace CountriesStructure.API.Services.Implementations
 
             return topNeighbour;
         }
-
-        public Task<IEnumerable<string>> GetPathToDestination(string destinationCountryCode)
-        {
-            return GetPathFromOriginToDestination(destinationCountryCode, "USA");
-        }
-
+        
         private async Task<(Country, Country)> GetDestinationAndOriginCountries(string destinationCountryCode, string originCountryCode)
         {
             var destCountry = await GetCountryWithTopNeighbour(destinationCountryCode);

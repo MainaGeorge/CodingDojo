@@ -46,7 +46,6 @@ namespace CountriesStructure.Tests.ServiceTests
         public async Task Service_ReturnCorrectPath_WhenUsedWithValidContinentMembers(string destinationCountryCode, string originCountryCode, 
             IEnumerable<string> expectedPath)
         {
-        
             var path = await _repo.GetPathFromOriginToDestination(destinationCountryCode, originCountryCode);
         
             Assert.Equal(expectedPath, path);
@@ -56,16 +55,46 @@ namespace CountriesStructure.Tests.ServiceTests
         [InlineData("PAN", "SLV")]
         public async Task RepoThrowsArgumentException_ifOneOfTheCountriesDoesNotExist(string origin, string destination)
         {
-            await Assert.ThrowsAsync<ArgumentException>(() =>  _repo.GetPathFromOriginToDestination(destination, origin));
+            var error = await Assert.ThrowsAsync<ArgumentException>(() =>  _repo.GetPathFromOriginToDestination(destination, origin));
+            Assert.Equal("You can not travel to or come from a country that does not exist", error.Message);
         }
 
         [Theory]
         [InlineData("BLZ", "GTM")]
         public async Task Continent_ThrowsException_ifNoPathBetweenTwoCountriesExist(string origin, string destination)
         {
-            await Assert.ThrowsAsync<Exception>(() => _repo.GetPathFromOriginToDestination(destination, origin));
+            var error = await Assert.ThrowsAsync<Exception>(() => _repo.GetPathFromOriginToDestination(destination, origin));
+            Assert.Equal($"No such path exists from {origin} to {destination}", error.Message);
         }
 
+        [Theory]
+        [InlineData("", "MEX")]
+        [InlineData( "MEX", "")]
+        [InlineData(null, "MEX")]
+        [InlineData("GTM", null)]      
+        [InlineData(null, null)]
+        public async Task Continent_ThrowsArgumentException_ifOneOrBothDestinationAndOriginCodesIsNullOrEmpty(
+            string destination, string origin)
+        {
+            var error = await Assert.ThrowsAsync<ArgumentException>(() =>
+                _repo.GetPathFromOriginToDestination(destination, origin));
+            
+            Assert.Equal("You have to enter both origin and destination countries", error.Message);
+        }
+
+        [Theory]
+        [InlineData("MEX", "mex")]
+        [InlineData("USA", "uSa")]
+        [InlineData("CAN", "CAN")]
+        public async Task Continent_ThrowsArgumentException_IfOriginAndDestinationCodesAreTheSame(string origin,
+            string destination)
+        {
+            var error = await Assert.ThrowsAsync<ArgumentException>(() =>
+                _repo.GetPathFromOriginToDestination(origin, destination));
+            
+            Assert.Equal("You are already here dummy!!", error.Message);
+        }
+        
 
         public void Dispose()
         {
