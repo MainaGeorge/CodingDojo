@@ -1,4 +1,5 @@
-﻿using CountriesStructure.API.Models;
+﻿using CountriesStructure.API.CustomMiddleware;
+using CountriesStructure.API.Models;
 using CountriesStructure.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,9 @@ namespace CountriesStructure.API.Controllers
 {
     [Route("path")]
     [ApiController]
+    [ProducesResponseType(typeof(ResponseData), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorDescriptor), StatusCodes.Status500InternalServerError)]
+
     public class CountriesController : ControllerBase
     {
         private readonly IContinentStructure _continentStructure;
@@ -17,7 +21,6 @@ namespace CountriesStructure.API.Controllers
             _continentRepo = continentRepo;
         }
 
-        [ProducesResponseType(typeof(ResponseData), StatusCodes.Status200OK)]
         [HttpGet("{destinationCountryCode}")]
         public async Task<ActionResult<ResponseData>> GetCountriesToDestination(string destinationCountryCode)
         {
@@ -30,7 +33,6 @@ namespace CountriesStructure.API.Controllers
 
         }
 
-        [ProducesResponseType(typeof(ResponseData), StatusCodes.Status200OK)]
         [HttpGet("{source}/{destination}")]
         public async Task<ActionResult<ResponseData>> GetCountriesFromSourceToDestination(string source,
             string destination)

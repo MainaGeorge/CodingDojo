@@ -4,6 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerComposeProjectPath>..\CountriesStructure\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>1c7ab757-20a8-4f4d-9a0f-6b6f3d2c0ec6</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\CountriesStructure</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>

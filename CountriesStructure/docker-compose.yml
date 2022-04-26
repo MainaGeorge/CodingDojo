@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  countriesstructure.api:
+    image: ${DOCKER_REGISTRY-}countriesstructureapi
+    build:
+      context: .
+      dockerfile: ../CountriesStructure.API/Dockerfile
